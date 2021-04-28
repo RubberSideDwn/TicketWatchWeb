@@ -1,16 +1,15 @@
 import React, { Component } from "react";
 // import { Link } from "react-router-dom";
 import axios from "axios";
-import "./AddVehicle.scss";
+import './Search.scss';
 
 const initialState = {
-    vehName: '', 
     plate: '', 
     state: ''
 };
 
 
-class AddVehicle extends Component {
+class Search extends Component {
     state = initialState;
 
     // validate = () => {
@@ -30,10 +29,6 @@ class AddVehicle extends Component {
     //     }
     // }
 
-    handleChangeName = (e) => {
-        this.setState({ vehName: e.target.value });
-        console.log(this.state.vehName); 
-    }
     handleChangePlate = (e) => {
         this.setState({ plate: e.target.value });
         console.log(this.state.plate); 
@@ -54,12 +49,18 @@ class AddVehicle extends Component {
         // console.log(this.state.vehName, this.state.plate, this.state.state);
 
         // if (isValid) {
+
         axios
-            .post("http://localhost:8080/api/garage", {
-                name: this.state.vehName,
-                plate: this.state.plate,
-                state: this.state.state,
-        })
+            .get(`https://data.cityofnewyork.us/resource/nc67-uf89.json`,
+            {
+                params: {
+                    plate: this.state.plate,
+                    state: this.state.state
+                },
+                headers: {
+                    'X-App-Token': '8S7MHDy96yb3fu8863lQfcg8P'
+                }
+            })
         .then(console.log("submit"))
         .then((response) => console.log(response));
             this.setState(initialState);
@@ -74,13 +75,6 @@ class AddVehicle extends Component {
             <form onSubmit={this.handleSubmit}>
                 <input
                     type="text"
-                    name="vehName"
-                    placeholder="vehicle name"
-                    value={this.state.vehName}
-                    onChange={this.handleChangeName} 
-                    />
-                <input
-                    type="text"
                     name="plate"
                     placeholder="plate #" 
                     value={this.state.plate}
@@ -93,11 +87,11 @@ class AddVehicle extends Component {
                     value={this.state.state}
                     onChange={this.handleChangeState} 
                     />
-                <button onClick={this.handleSubmit}>Add Vehicle</button>
+                <button onClick={this.handleSubmit}>Search Tickets</button>
             </form>
         </section>
         );
     }
 }
 
-export default AddVehicle;
+export default Search;
