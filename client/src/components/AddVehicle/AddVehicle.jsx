@@ -1,26 +1,17 @@
 import React, { Component } from "react";
 // import { Link } from "react-router-dom";
 import axios from "axios";
+import "./AddVehicle.scss";
 
 const initialState = {
-    vehName: '', plate: '', state: ''
+    vehName: '', 
+    plate: '', 
+    state: ''
 };
 
 
 class AddVehicle extends Component {
     state = initialState;
-
-    handleName = (event) => {
-        this.setState({ vehName: event.target.value });
-        console.log(this.state.vehName)
-    };
-    
-    handlePlate = (event) => {
-        this.setState({ plate: event.target.plate });
-    };
-    handleState = (event) => {
-        this.setState({ state: event.target.state });
-    };
 
     validate = () => {
         let vehName = "";
@@ -44,23 +35,20 @@ class AddVehicle extends Component {
         console.log(this.state.vehName); 
     }
     handleChangePlate = (e) => {
-        this.setState({ vehName: e.target.value });
+        this.setState({ plate: e.target.value });
         console.log(this.state.plate); 
     }
     handleChangeState = (e) => {
-        this.setState({ vehName: e.target.value });
+        this.setState({ state: e.target.value });
         console.log(this.state.state); 
     }
 
-    handleClick = (e) => {
-        e.preventDefault();
-        console.log(this.state.value)
-    }
     handleSubmit = (e) => {
         e.preventDefault();
         this.handleName(e); 
         this.handlePlate(e);
         this.handleState(e);
+
         console.log(e.target.vehName)
         const isValid = this.validate()
         console.log(this.state.vehName, this.state.plate, this.state.state);
@@ -80,7 +68,9 @@ class AddVehicle extends Component {
     };
 
     render() {
+        console.log(this.state);
             return (
+            <section className="landing">
             <form onSubmit={this.handleSubmit}>
                 <input
                     type="text"
@@ -88,7 +78,6 @@ class AddVehicle extends Component {
                     placeholder="vehicle name"
                     value={this.state.vehName}
                     onChange={this.handleChangeName} 
-                    // onChangeText={text => setText(text)}
                     />
                 <input
                     type="text"
@@ -104,9 +93,9 @@ class AddVehicle extends Component {
                     value={this.state.state}
                     onChange={this.handleChangeState} 
                     />
-
-                <button onClick={this.handleSubmit} type="submit">Add Vehicle</button>
+                <button onClick={this.handleSubmit}>Add Vehicle</button>
             </form>
+        </section>
         );
     }
 }
