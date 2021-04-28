@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 
 
 //sets garage location
-const fullPath = path.join(__dirname, "../client/assets/data/garage.json");
+const garagePath = path.join(__dirname, "../client/src/assets/data/garage.json");
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,12 +18,12 @@ app.use(bodyParser.json())
 
 // define a simple route
 app.get('/api/garage', (req, res) => {
-  const garage = fs.readFileSync(fullPath, "utf8");
+  const garage = fs.readFileSync(garagePath, "utf8");
   res.json(JSON.parse(garage));
 });
 
 app.post("/api/garage", (req, res) => {
-  const garage = fs.readFileSync(fullPath, "utf8");
+  const garage = fs.readFileSync(garagePath, "utf8");
   const {name, plate, state } = req.body;
   const w = JSON.parse(garage);
   const id = uuidv4();
@@ -34,7 +34,7 @@ app.post("/api/garage", (req, res) => {
     state,
   };
   w.push(newVeh);
-  fs.writeFileSync(fullPath, JSON.stringify(w));
+  fs.writeFileSync(garagePath, JSON.stringify(w));
   console.log("vehicle added");
   res.json({ status: "vehicle entry successful"});
 });
