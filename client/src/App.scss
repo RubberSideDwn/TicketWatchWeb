@@ -1,0 +1,24 @@
+
+@import "custom";
+
+$mobile-breakpoint: 375px;
+$tablet-breakpoint: 768px;
+$desktop-breakpoint: 1280px;
+
+@mixin desktop {
+@media screen and (min-width: 1080px) {
+    @content;
+}
+}
+
+@mixin tablet {
+@media screen and (min-width: 768px) {
+    @content;
+}
+}
+
+@mixin mobile {
+@media screen and (max-width: 100vw) {
+    @content;
+}
+}
