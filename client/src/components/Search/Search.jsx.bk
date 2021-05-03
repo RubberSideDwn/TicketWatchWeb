@@ -1,0 +1,101 @@
+import React, { Component } from "react";
+import axios from "axios";
+import './Search.scss';
+import Button from 'react-bootstrap/Button';
+// import Modal from "react-bootstrap/Modal";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+
+const initialState = {
+    plate: '', 
+    state: ''
+};
+
+
+class Search extends Component {
+    state = initialState;
+
+    handleChangePlate = (e) => {
+        this.setState({ plate: e.target.value });
+    }
+    handleChangeState = (e) => {
+        this.setState({ state: e.target.value });
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+            axios
+            .get(`https://data.cityofnewyork.us/resource/nc67-uf89.json`,
+            {
+                params: {
+                    plate: this.state.plate,
+                    state: this.state.state
+                },
+                headers: {
+                    'X-App-Token': '8S7MHDy96yb3fu8863lQfcg8P'
+                }
+            })
+            .then((res) => {
+                // console.log(res);
+                this.setState({violations: res.data});
+                // const violations = res.data;
+                console.log(this.state.violations); 
+        
+            })
+            .then((res) => {
+            this.setState({
+                plate: res.data.plate,
+                state: res.data.state,
+                date: res.data.issue_date,
+                time: res.data.violation_time,
+                violation: res.data.violation,
+            })
+        })
+            .catch(error => console.log("none found, check back later!"));
+    } 
+
+        render() {
+            // console.log(this.state);
+                return (
+    <section className="landing">
+    
+                <div className="card text-center">
+                    <div className="card-title">
+                        TicketWatch
+                        <br/>NYC
+                    </div>                
+                    <form onSubmit={this.handleSubmit}>
+                        <div className="form-group">
+                            <div className="col">
+                            <input
+                            type="text"
+                            name="plate"
+                            placeholder="plate #" 
+                            value={this.state.plate}
+                            onChange={this.handleChangePlate}
+                            />
+                            </div>
+                            <div className="col">
+                                <input
+                                    type="text"
+                                    name="state"
+                                    placeholder="state"
+                                    value={this.state.state}
+                                    onChange={this.handleChangeState} 
+                                    />
+                            </div>
+                        </div>
+                        <Button type="submit">Search Tickets</Button>
+                    </form>
+        </div>  
+        <div>
+            {this.state.violation?.map((violation) => {
+        return (<div>{violation.violation}</div>)})}
+        </div>                    
+    </section>
+            );
+        }
+
+    }
+
+export default Search;

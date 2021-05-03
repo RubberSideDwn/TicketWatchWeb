@@ -1,97 +1,95 @@
-import React, { Component } from "react";
-// import { Link } from "react-router-dom";
+import { React, Component } from "react";
+import ViolationsList from "../ViolationsList/ViolationsList";
 import axios from "axios";
 import './Search.scss';
+import Button from 'react-bootstrap/Button';
+// import Modal from "react-bootstrap/Modal";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-const initialState = {
-    plate: '', 
-    state: ''
-};
-
+const urlKey = "https://data.cityofnewyork.us/resource/nc67-uf89.json";
 
 class Search extends Component {
-    state = initialState;
-
-    // validate = () => {
-    //     let vehName = "";
-    //     let plate = "";
-    //     let state = "";
-
-    //     if (!this.state.vehName) {
-            
-    //         vehName = "This field is required";
-    //     }
-    //     if (!this.state.plate) {
-    //         plate = "This field is required";
-    //     }
-    //     if (!this.state.state) {
-    //         state = "This field is required";
-    //     }
-    // }
+    state = {
+        violations: [],
+    };
 
     handleChangePlate = (e) => {
         this.setState({ plate: e.target.value });
-        console.log(this.state.plate); 
     }
     handleChangeState = (e) => {
         this.setState({ state: e.target.value });
-        console.log(this.state.state); 
     }
 
     handleSubmit = (e) => {
-        e.preventDefault();
-        // this.handleName(e); 
-        // this.handlePlate(e);
-        // this.handleState(e);
-
-        // console.log(e.target.vehName)
-        // const isValid = this.validate()
-        // console.log(this.state.vehName, this.state.plate, this.state.state);
-
-        // if (isValid) {
-
-        axios
-            .get(`https://data.cityofnewyork.us/resource/nc67-uf89.json`,
-            {
-                params: {
-                    plate: this.state.plate,
-                    state: this.state.state
-                },
-                headers: {
-                    'X-App-Token': '8S7MHDy96yb3fu8863lQfcg8P'
-                }
-            })
-        .then(console.log("submit"))
-        .then((response) => console.log(response));
-            this.setState(initialState);
-        
-        // }
-    };
+            e.preventDefault();
+            axios
+                .get(`${urlKey}`,
+                {
+                    params: {
+                        plate: this.state.plate,
+                        state: this.state.state
+                    },
+                    headers: {
+                        'X-App-Token': '8S7MHDy96yb3fu8863lQfcg8P'
+                    }
+                })
+                .then((res) => {
+                    this.setState({violations: res.data});
+                    console.log(this.state.violations);
+                })
+                .catch((err) => console.log(err))
+            };
 
     render() {
-        console.log(this.state);
-            return (
+        return (
             <section className="landing">
-            <form onSubmit={this.handleSubmit}>
-                <input
-                    type="text"
-                    name="plate"
-                    placeholder="plate #" 
-                    value={this.state.plate}
-                    onChange={this.handleChangePlate}
+            <div className="card text-center">
+                <div className="card-title">
+                    TicketWatch
+                    <br/>NYC
+                </div>                  
+                <form onSubmit={this.handleSubmit}>
+                        <div className="form-group">
+                            <div className="col">
+                            <input
+                            type="text"
+                            name="plate"
+                            placeholder="plate #" 
+                            value={this.state.plate}
+                            onChange={this.handleChangePlate}
+                            />
+                            </div>
+                            <div className="col">
+                                <input
+                                    type="text"
+                                    name="state"
+                                    placeholder="state"
+                                    value={this.state.state}
+                                    onChange={this.handleChangeState} 
+                                    />
+                            </div>
+                        </div>
+                        <Button type="submit">Search Tickets</Button>
+                </form>
+            {this.state.violations.map((violations) => {
+                return (
+                    <ViolationsList
+                    key={violations.summons_number}
+                    summons_number={violations.summons_number}
+                    plate={violations.plate}
+                    state={violations.state}
+                    issue_date={violations.issue_date}
+                    violation_time={violations.violation_time}
+                    violation={violations.violation}
+                    amount_due={violations.amount_due}
+                    url={violations.summons_image.url}
                     />
-                <input
-                    type="text"
-                    name="state"
-                    placeholder="state"
-                    value={this.state.state}
-                    onChange={this.handleChangeState} 
-                    />
-                <button onClick={this.handleSubmit}>Search Tickets</button>
-            </form>
+                );
+            })}
+            </div>
         </section>
-        );
-    }
-}
+        
+            );
+        }}
 
 export default Search;
